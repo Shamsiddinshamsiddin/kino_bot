@@ -99,3 +99,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Yordam: /start, /add, /delete")
+
+async def get_edit_name(update, context):
+    await update.message.reply_text("Kino nomi qabul qilindi!")
+    return ConversationHandler.END
