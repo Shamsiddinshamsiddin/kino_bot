@@ -1,14 +1,29 @@
 import asyncio
+import threading
 import database
 import handlers
 import config
+from flask import Flask
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ConversationHandler
 
+# Flask serveri (Render bepul bo'lishi uchun)
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running!"
+
+def run_web():
+    app.run(host="0.0.0.0", port=10000)
+
 async def main():
+    # 1. Ma'lumotlar bazasini ishga tushirish
     await database.init_db()
+    
+    # 2. Botni sozlash
     application = Application.builder().token(config.BOT_TOKEN).build()
 
-    # ConversationHandler
+    # 3. ConversationHandler
     conv_handler = ConversationHandler(
         entry_points=[
             CommandHandler("add", handlers.admin_start),
@@ -24,12 +39,16 @@ async def main():
         per_message=False
     )
 
+    # 4. Handlerlarni qo'shish
     application.add_handler(conv_handler)
     application.add_handler(CallbackQueryHandler(handlers.button_handler))
     application.add_handler(CommandHandler("start", handlers.admin_panel))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handlers.find_movie))
 
     print("Bot muvaffaqiyatli ishga tushdi...")
+    
+    # 5. Polling va Web-serverni ishga tushirish
+    threading.Thread(target=run_web, daemon=True).start()
     
     await application.initialize()
     await application.start()
