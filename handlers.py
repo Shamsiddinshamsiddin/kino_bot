@@ -18,12 +18,18 @@ async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await find_movie(update, context)
 
-# --- Tugmalar (Callback Handler) ---
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    await query.answer()
-
+    
+    # MUHIM: Xatolarni oldini olish uchun try/except qo'shamiz
+    try:
+        await query.answer()
+    except Exception as e:
+        print(f"Query answer error: {e}")
+        # Agar query eskirgan bo'lsa ham davom etamiz
+    
     if query.data == "list_movies":
+        # ... qolgan kodlar ...
         movies = await database.get_all_movies()
         if not movies:
             await query.edit_message_text("❌ Hozircha kinolar mavjud emas.")
@@ -32,14 +38,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             for code, title in movies:
                 text += f"🎬 {title} | Kod: `{code}`\n"
             await query.edit_message_text(text, parse_mode='Markdown')
-    
+            
     elif query.data == "add_movie":
-        # Tugma bosilganda admin_start funksiyasiga yo'naltiramiz
         await admin_start(update, context)
         
     elif query.data == "delete_movie":
         await delete_movie_start(update, context)
-
 # --- Kino qo'shish jarayoni ---
 async def admin_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Agar callback orqali kelsa query, buyruq orqali kelsa message ishlatamiz
