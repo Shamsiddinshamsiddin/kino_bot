@@ -17,7 +17,7 @@ async def main():
         states={
             handlers.CODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handlers.get_code)],
             handlers.FILE: [MessageHandler(filters.VIDEO | filters.Document.ALL, handlers.get_file)],
-            handlers.NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handlers.get_name)],
+            handlers.EDIT_NAME: [MessageHandler(filters.VIDEO | filters.Document.ALL, handlers.get_edit_file)],
             handlers.DELETE_CODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handlers.delete_movie_confirm)],
             handlers.EDIT_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, handlers.get_edit_name)],
             handlers.EDIT_FILE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handlers.get_edit_file)],
