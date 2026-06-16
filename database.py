@@ -47,3 +47,10 @@ async def update_movie_name(code, new_name):
     async with aiosqlite.connect(DB_NAME) as db:
         await db.execute("UPDATE movies SET title = ? WHERE code = ?", (new_name, code.upper()))
         await db.commit()
+
+async def get_all_codes():
+    """Barcha mavjud kodlarni olish."""
+    async with aiosqlite.connect(DB_NAME) as db:
+        async with db.execute("SELECT code FROM movies") as cursor:
+            rows = await cursor.fetchall()
+            return [row[0] for row in rows]
